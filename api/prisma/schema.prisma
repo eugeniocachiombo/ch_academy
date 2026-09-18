@@ -12,6 +12,13 @@ enum Status {
   activo
   condicionado
   bloqueado
+  cancelada
+}
+
+enum StatusAcademic {
+  activa
+  cancelada
+  concluida
 }
 
 model User {
@@ -51,6 +58,7 @@ model AcademicYear {
   id                Int                @id @default(autoincrement())
   name              String
   academicRegisters AcademicRegister[]
+  status            StatusAcademic     @default(activa)
 }
 
 model Course {
@@ -95,16 +103,22 @@ model Teacher {
 }
 
 model AcademicRegister {
-  id              Int          @id @default(autoincrement())
-  num             Int // random
+  id  Int @id @default(autoincrement())
+  num Int // random
+
   academicYear_id Int
   academicYear    AcademicYear @relation(fields: [academicYear_id], references: [id])
-  course_id       Int
-  course          Course       @relation(fields: [course_id], references: [id])
-  class_id        Int
-  class           Class        @relation(fields: [class_id], references: [id])
-  student_id      Int
-  student         Student      @relation(fields: [student_id], references: [id])
+
+  course_id Int
+  course    Course @relation(fields: [course_id], references: [id])
+
+  class_id Int
+  class    Class @relation(fields: [class_id], references: [id])
+
+  student_id Int
+  student    Student @relation(fields: [student_id], references: [id])
+
+  status StatusAcademic @default(activa)
 }
 
 model Role {
