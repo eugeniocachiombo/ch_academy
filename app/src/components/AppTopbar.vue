@@ -29,7 +29,7 @@
           </strong>
 
           <small>
-            {{ formatTitleCase(userStore?.currentUser?.profile, 'Consumidor') }}
+            {{ formatTitleCase(userStore?.currentUser?.role, 'Role') }}
           </small>
         </div>
         <i class="pi pi-angle-down user-chevron"></i>
