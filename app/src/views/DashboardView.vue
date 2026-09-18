@@ -8,7 +8,6 @@
       </div>
       <div class="flex items-center gap-3">
         <Button label="Gerar Relatório" icon="pi pi-download" severity="secondary" outlined />
-        <Button label="Novo Registo" icon="pi pi-plus" />
       </div>
     </div>
 
@@ -32,7 +31,7 @@
         <template #content>
           <div class="flex items-center justify-between">
             <div>
-              <span class="text-sm font-medium text-[var(--text-color-secondary)]">Professores Ativos</span>
+              <span class="text-sm font-medium text-[var(--text-color-secondary)]">Professores Activos</span>
               <h3 class="text-2xl font-bold mt-1 text-[var(--text-color)]">84</h3>
             </div>
             <div class="p-3 rounded-xl bg-purple-500/10 text-purple-500">
@@ -60,7 +59,7 @@
         <template #content>
           <div class="flex items-center justify-between">
             <div>
-              <span class="text-sm font-medium text-[var(--text-color-secondary)]">Matrículas Ativas</span>
+              <span class="text-sm font-medium text-[var(--text-color-secondary)]">Matrículas Activas</span>
               <h3 class="text-2xl font-bold mt-1 text-[var(--text-color)]">1,192</h3>
             </div>
             <div class="p-3 rounded-xl bg-emerald-500/10 text-emerald-500">

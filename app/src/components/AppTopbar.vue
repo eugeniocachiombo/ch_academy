@@ -6,7 +6,7 @@
 
       <div class="breadcrumb">
         <i class="pi pi-home"></i>
-        <span>PlanoK</span>
+        <span>Gestão Acadêmica</span>
         <i class="pi pi-angle-right"></i>
         <strong>{{ pageTitle }}</strong>
       </div>
