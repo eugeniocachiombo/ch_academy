@@ -8,9 +8,28 @@ datasource db {
 }
 
 model User {
-  id               Int               @id @default(autoincrement())
-  name             String?
-  username         String            @unique @default("empty")
-  password         String            @default("empty")
+  id       Int      @id @default(autoincrement())
+  name     String
+  username String   @unique @default("empty")
+  email    String?
+  password String   @default("empty")
+  persons  Person[]
 }
 
+model Person {
+  id         Int      @id @default(autoincrement())
+  firstname  String
+  middlename String
+  lastname   String
+  birthday   DateTime @db.Date()
+  gender     String
+  phone      Int
+
+  user_id Int
+  user    User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model AcademicYear {
+  id   Int    @id @default(autoincrement())
+  name String
+}
