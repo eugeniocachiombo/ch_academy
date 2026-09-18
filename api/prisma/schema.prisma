@@ -7,13 +7,24 @@ datasource db {
   provider = "postgresql"
 }
 
+// Enums para os status solicitados
+enum Status {
+  activo
+  condicionado
+  bloqueado
+}
+
 model User {
-  id       Int      @id @default(autoincrement())
-  name     String
-  username String   @unique @default("empty")
-  email    String?
-  password String   @default("empty")
-  persons  Person[]
+  id        Int        @id @default(autoincrement())
+  name      String
+  username  String     @unique @default("empty")
+  email     String?
+  password  String     @default("empty")
+  status    String? // Ou pode usar o enum Status se preferir
+  person_id Int? // nullable
+  person    Person?    @relation(fields: [person_id], references: [id])
+  persons   Person[]   @relation("UserPersons")
+  userRoles UserRole[]
 }
 
 model Person {
@@ -26,10 +37,112 @@ model Person {
   phone      Int
 
   user_id Int
-  user    User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user    User @relation("UserPersons", fields: [user_id], references: [id], onDelete: Cascade)
+
+  // Relação inversa opcional caso o User aponte para Person via person_id
+  UserAsMain User[]
+
+  student      Student?
+  teacher      Teacher?
+  localization Localization?
 }
 
 model AcademicYear {
-  id   Int    @id @default(autoincrement())
-  name String
+  id                Int                @id @default(autoincrement())
+  name              String
+  academicRegisters AcademicRegister[]
+}
+
+model Course {
+  id                Int                @id @default(autoincrement())
+  name              String
+  classes           Class[]
+  subjects          Subject[]
+  academicRegisters AcademicRegister[]
+}
+
+model Class {
+  id                Int                @id @default(autoincrement())
+  name              String
+  course_id         Int
+  course            Course             @relation(fields: [course_id], references: [id])
+  subjects          Subject[]
+  academicRegisters AcademicRegister[]
+}
+
+model Subject {
+  id        Int     @id @default(autoincrement())
+  name      String
+  class_id  Int
+  class     Class   @relation(fields: [class_id], references: [id])
+  course_id Int? // nullable
+  course    Course? @relation(fields: [course_id], references: [id])
+}
+
+model Student {
+  id                Int                @id @default(autoincrement())
+  person_id         Int                @unique
+  person            Person             @relation(fields: [person_id], references: [id])
+  status            Status             @default(activo)
+  academicRegisters AcademicRegister[]
+}
+
+model Teacher {
+  id        Int    @id @default(autoincrement())
+  person_id Int    @unique
+  person    Person @relation(fields: [person_id], references: [id])
+  status    Status @default(activo)
+}
+
+model AcademicRegister {
+  id              Int          @id @default(autoincrement())
+  num             Int // random
+  academicYear_id Int
+  academicYear    AcademicYear @relation(fields: [academicYear_id], references: [id])
+  course_id       Int
+  course          Course       @relation(fields: [course_id], references: [id])
+  class_id        Int
+  class           Class        @relation(fields: [class_id], references: [id])
+  student_id      Int
+  student         Student      @relation(fields: [student_id], references: [id])
+}
+
+model Role {
+  id             Int             @id @default(autoincrement())
+  name           String
+  userRoles      UserRole[]
+  rolePermitions RolePermition[]
+}
+
+model Permition {
+  id             Int             @id @default(autoincrement())
+  name           String
+  rolePermitions RolePermition[]
+}
+
+model UserRole {
+  user_id Int
+  user    User @relation(fields: [user_id], references: [id])
+  role_id Int
+  role    Role @relation(fields: [role_id], references: [id])
+
+  @@id([user_id, role_id])
+}
+
+model RolePermition {
+  role_id      Int
+  role         Role      @relation(fields: [role_id], references: [id])
+  permition_id Int
+  permition    Permition @relation(fields: [permition_id], references: [id])
+
+  @@id([role_id, permition_id])
+}
+
+model Localization {
+  person_id       Int     @unique
+  person          Person  @relation(fields: [person_id], references: [id])
+  province_id     Int
+  municipality_id Int? // nullable
+  address         String? // nullable
+  naturality      Boolean // Naturality Boolean
 }
