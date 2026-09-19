@@ -56,14 +56,14 @@ model Person {
 
 model AcademicYear {
   id                Int                @id @default(autoincrement())
-  name              String
+  name              String             @unique
   academicRegisters AcademicRegister[]
   status            StatusAcademic     @default(activa)
 }
 
 model Course {
   id                Int                @id @default(autoincrement())
-  name              String
+  name              String             @unique
   classes           Class[]
   subjects          Subject[]
   academicRegisters AcademicRegister[]
@@ -78,6 +78,8 @@ model Class {
 
   subjects          Subject[]
   academicRegisters AcademicRegister[]
+
+  @@unique([name, course_id])
 }
 
 model Subject {
@@ -88,6 +90,8 @@ model Subject {
 
   class  Class   @relation(fields: [class_id], references: [id], onDelete: Cascade)
   course Course? @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
+  @@unique([name, class_id, course_id])
 }
 
 model Student {
@@ -126,36 +130,39 @@ model AcademicRegister {
 
 model Role {
   id             Int             @id @default(autoincrement())
-  name           String
+  name           String          @unique
   userRoles      UserRole[]
   rolePermitions RolePermition[]
 }
 
 model Permition {
   id             Int             @id @default(autoincrement())
-  name           String
+  name           String          @unique
   rolePermitions RolePermition[]
 }
 
 model UserRole {
+  id      Int  @id @default(autoincrement())
   user_id Int
   user    User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   role_id Int
   role    Role @relation(fields: [role_id], references: [id], onDelete: Cascade)
 
-  @@id([user_id, role_id])
+  @@unique([user_id, role_id])
 }
 
 model RolePermition {
+  id           Int       @id @default(autoincrement())
   role_id      Int
   role         Role      @relation(fields: [role_id], references: [id], onDelete: Cascade)
   permition_id Int
   permition    Permition @relation(fields: [permition_id], references: [id], onDelete: Cascade)
 
-  @@id([role_id, permition_id])
+  @@unique([role_id, permition_id])
 }
 
 model Localization {
+  id              Int     @id @default(autoincrement())
   person_id       Int     @unique
   person          Person  @relation(fields: [person_id], references: [id], onDelete: Cascade)
   province_id     Int
