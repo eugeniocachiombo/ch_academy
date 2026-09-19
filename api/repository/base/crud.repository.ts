@@ -86,6 +86,7 @@ export class Crud {
     }
 
     async delete(id: string | number, model?: PrismaModel) {
+        console.log("saida: ", id)
         await this.find(id, model);
 
         const m = this.getModel(model);
