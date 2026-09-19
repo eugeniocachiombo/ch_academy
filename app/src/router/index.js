@@ -33,6 +33,11 @@ const routes = [
         name: "academic_year",
         component: () => import("@/views/AcademicYear/Index.vue"),
       },
+      {
+        path: "cursos",
+        name: "course",
+        component: () => import("@/views/Course/Index.vue"),
+      },
     ],
   },
   {

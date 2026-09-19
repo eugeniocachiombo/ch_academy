@@ -18,9 +18,15 @@
           <i class="pi pi-home"></i>
           <span>Dashboard</span>
         </RouterLink>
+        
         <RouterLink to="/anos-lectivos" class="menu-item" @click="$emit('close')">
           <i class="pi pi-book"></i>
           <span>Ano Lectivo</span>
+        </RouterLink>
+
+        <RouterLink to="/cursos" class="menu-item" @click="$emit('close')">
+          <i class="pi pi-book"></i>
+          <span>Cursos</span>
         </RouterLink>
       </nav>
 
