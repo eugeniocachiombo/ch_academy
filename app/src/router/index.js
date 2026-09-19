@@ -48,6 +48,11 @@ const routes = [
         name: "subject",
         component: () => import("@/views/Subject/Index.vue"),
       },
+      {
+        path: "Funções",
+        name: "role",
+        component: () => import("@/views/Role/Index.vue"),
+      },
     ],
   },
   {
