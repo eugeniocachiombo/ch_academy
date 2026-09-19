@@ -148,7 +148,7 @@ onMounted(async () => {
           <h1>Classes</h1>
           <Tag v-if="classStore.classs" :value="classStore.classs.length" severity="info" class="count-badge" />
         </div>
-        <p>Gerencie os {{pluralLabel.toLowerCase()}} do sistema.</p>
+        <p>Gerencie as {{pluralLabel.toLowerCase()}} do sistema.</p>
       </div>
       <div class="heading-actions">
         <Button label="Nova Classe" icon="pi pi-plus" class="p-button-primary btn-add" :disabled="classStore.isLoading" @click="openCreateDialog" />
