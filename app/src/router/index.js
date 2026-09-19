@@ -53,6 +53,11 @@ const routes = [
         name: "role",
         component: () => import("@/views/Role/Index.vue"),
       },
+      {
+        path: "Permissões",
+        name: "permition",
+        component: () => import("@/views/Permition/Index.vue"),
+      },
     ],
   },
   {

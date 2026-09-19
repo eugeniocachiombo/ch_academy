@@ -43,6 +43,11 @@
           <i class="pi pi-book"></i>
           <span>Funções</span>
         </RouterLink>
+
+        <RouterLink to="/permissões" class="menu-item" @click="$emit('close')">
+          <i class="pi pi-book"></i>
+          <span>Permissões</span>
+        </RouterLink>
       </nav>
 
       <div class="sidebar-footer">

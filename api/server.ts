@@ -6,6 +6,7 @@ import { courseRoutes } from "./routes/course.routes.js";
 import { classRoutes } from "./routes/class.routes.js";
 import { subjectRoutes } from "./routes/subject.routes.js";
 import { roleRoutes } from "./routes/role.routes.js";
+import { permitionRoutes } from "./routes/permition.routes.js";
 const app = express();
 
 app.use(cors({
@@ -21,6 +22,7 @@ app.use("/api", courseRoutes);
 app.use("/api", classRoutes);
 app.use("/api", subjectRoutes);
 app.use("/api", roleRoutes);
+app.use("/api", permitionRoutes);
 
 app.get("/", (req, res) => {
   res.json({
