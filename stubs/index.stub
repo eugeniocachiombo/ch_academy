@@ -91,6 +91,7 @@ async function handleSave(formPayload) {
       isDialogVisible.value = false;
       toast.add({ severity: 'success', summary: 'Sucesso', detail: `${singularLabel} criado com sucesso.`, life: 3500 });
     }
+    selectedItem.value = {data: null};
   } catch (error) {
     const responseData = error?.response?.data;
     if (responseData?.errors) {
