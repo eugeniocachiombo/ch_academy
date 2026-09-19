@@ -29,7 +29,7 @@ model User {
   password  String     @default("empty")
   status    String? // Ou pode usar o enum Status se preferir
   person_id Int? // nullable
-  person    Person?    @relation(fields: [person_id], references: [id])
+  person    Person?    @relation(fields: [person_id], references: [id], onDelete: Cascade)
   persons   Person[]   @relation("UserPersons")
   userRoles UserRole[]
 }
@@ -70,11 +70,12 @@ model Course {
 }
 
 model Class {
-  id        Int    @id @default(autoincrement())
-  name      String
-  course_id Int?
+  id   Int    @id @default(autoincrement())
+  name String
 
-  course            Course?            @relation(fields: [course_id], references: [id])
+  course_id Int?
+  course    Course? @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
   subjects          Subject[]
   academicRegisters AcademicRegister[]
 }
@@ -85,14 +86,14 @@ model Subject {
   class_id  Int
   course_id Int? // nullable
 
-  class  Class   @relation(fields: [class_id], references: [id])
-  course Course? @relation(fields: [course_id], references: [id])
+  class  Class   @relation(fields: [class_id], references: [id], onDelete: Cascade)
+  course Course? @relation(fields: [course_id], references: [id], onDelete: Cascade)
 }
 
 model Student {
   id                Int                @id @default(autoincrement())
   person_id         Int                @unique
-  person            Person             @relation(fields: [person_id], references: [id])
+  person            Person             @relation(fields: [person_id], references: [id], onDelete: Cascade)
   status            Status             @default(activo)
   academicRegisters AcademicRegister[]
 }
@@ -100,7 +101,7 @@ model Student {
 model Teacher {
   id        Int    @id @default(autoincrement())
   person_id Int    @unique
-  person    Person @relation(fields: [person_id], references: [id])
+  person    Person @relation(fields: [person_id], references: [id], onDelete: Cascade)
   status    Status @default(activo)
 }
 
@@ -109,16 +110,16 @@ model AcademicRegister {
   num Int // random
 
   academicYear_id Int
-  academicYear    AcademicYear @relation(fields: [academicYear_id], references: [id])
+  academicYear    AcademicYear @relation(fields: [academicYear_id], references: [id], onDelete: Cascade)
 
   course_id Int
-  course    Course @relation(fields: [course_id], references: [id])
+  course    Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
 
   class_id Int
-  class    Class @relation(fields: [class_id], references: [id])
+  class    Class @relation(fields: [class_id], references: [id], onDelete: Cascade)
 
   student_id Int
-  student    Student @relation(fields: [student_id], references: [id])
+  student    Student @relation(fields: [student_id], references: [id], onDelete: Cascade)
 
   status StatusAcademic @default(activa)
 }
@@ -138,25 +139,25 @@ model Permition {
 
 model UserRole {
   user_id Int
-  user    User @relation(fields: [user_id], references: [id])
+  user    User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   role_id Int
-  role    Role @relation(fields: [role_id], references: [id])
+  role    Role @relation(fields: [role_id], references: [id], onDelete: Cascade)
 
   @@id([user_id, role_id])
 }
 
 model RolePermition {
   role_id      Int
-  role         Role      @relation(fields: [role_id], references: [id])
+  role         Role      @relation(fields: [role_id], references: [id], onDelete: Cascade)
   permition_id Int
-  permition    Permition @relation(fields: [permition_id], references: [id])
+  permition    Permition @relation(fields: [permition_id], references: [id], onDelete: Cascade)
 
   @@id([role_id, permition_id])
 }
 
 model Localization {
   person_id       Int     @unique
-  person          Person  @relation(fields: [person_id], references: [id])
+  person          Person  @relation(fields: [person_id], references: [id], onDelete: Cascade)
   province_id     Int
   municipality_id Int? // nullable
   address         String? // nullable
