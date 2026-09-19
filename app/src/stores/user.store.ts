@@ -30,6 +30,7 @@ export interface AuthResponse {
 
 export const useUserStore = defineStore('user', () => {
   const currentUser = ref<User | null>(null);
+  const users = ref<User[]>([]);
   const token = ref<string | null>(localStorage.getItem('token'));
   const isLoading = ref<boolean>(false);
   const error = ref<string | null>(null);
@@ -136,17 +137,35 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  async function list(): Promise<User[]> {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const response = await api.get<unknown, User[]>('/users');
+      users.value = response;
+      return response;
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Erro ao carregar {{pluralLabel.toLowerCase()}}.';
+      error.value = message;
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   // Executa a verificação ao instanciar a store
   initUser();
 
   return {
     currentUser,
+    users,
     token,
     isLoading,
     error,
     isAuthenticated,
     userName,
     clearError,
+    list,
     login,
     register,
     logout,
