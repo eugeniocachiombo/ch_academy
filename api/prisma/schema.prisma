@@ -70,21 +70,23 @@ model Course {
 }
 
 model Class {
-  id                Int                @id @default(autoincrement())
-  name              String
-  course_id         Int
-  course            Course             @relation(fields: [course_id], references: [id])
+  id        Int    @id @default(autoincrement())
+  name      String
+  course_id Int?
+
+  course            Course?            @relation(fields: [course_id], references: [id])
   subjects          Subject[]
   academicRegisters AcademicRegister[]
 }
 
 model Subject {
-  id        Int     @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   name      String
   class_id  Int
-  class     Class   @relation(fields: [class_id], references: [id])
   course_id Int? // nullable
-  course    Course? @relation(fields: [course_id], references: [id])
+
+  class  Class   @relation(fields: [class_id], references: [id])
+  course Course? @relation(fields: [course_id], references: [id])
 }
 
 model Student {
