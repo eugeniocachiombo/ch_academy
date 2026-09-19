@@ -1,0 +1,127 @@
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
+import { api } from '@/services/api';
+import cryptoService from '../services/crypto.service';
+
+export interface {{pascalName}} {
+  id: number;
+{{interfaceFields}}
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Create{{pascalName}}Payload {
+{{payloadFields}}
+}
+
+export interface Update{{pascalName}}Payload {
+{{updatePayloadFields}}
+}
+
+export const use{{pascalName}}Store = defineStore('{{name}}', () => {
+  const loggedId = String(localStorage.getItem('userID'));
+  const userId = cryptoService.encryptId(loggedId); 
+  const {{name}}s = ref<{{pascalName}}[]>([]);
+  const current{{pascalName}} = ref<{{pascalName}} | null>(null);
+  const isLoading = ref<boolean>(false);
+  const error = ref<string | null>(null);
+
+  function clearError(): void {
+    error.value = null;
+  }
+
+  async function list(): Promise<{{pascalName}}[]> {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const response = await api.get<unknown, {{pascalName}}[]>('/{{kebabName}}');
+      {{name}}s.value = response;
+      return response;
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Erro ao carregar {{pluralLabel.toLowerCase()}}.';
+      error.value = message;
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function find(id: number | string): Promise<{{pascalName}}> {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const encryptedId = cryptoService.encryptId(String(id));
+      const response = await api.get<unknown, {{pascalName}}>('/{{kebabName}}/' + encryptedId);
+      current{{pascalName}}.value = response;
+      return response;
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Erro ao procurar {{singularLabel.toLowerCase()}}.';
+      error.value = message;
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function create(payload: Create{{pascalName}}Payload): Promise<{{pascalName}}> {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const response = await api.post<unknown, {{pascalName}}>('/{{kebabName}}', payload);
+      await list();
+      return response;
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Erro ao criar {{singularLabel.toLowerCase()}}.';
+      error.value = message;
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function update(id: number | string, payload: Update{{pascalName}}Payload): Promise<{{pascalName}}> {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const encryptedId = cryptoService.encryptId(String(id));
+      const response = await api.put<unknown, {{pascalName}}>('/{{kebabName}}/' + encryptedId, payload);
+      await list();
+      return response;
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Erro ao actualizar {{singularLabel.toLowerCase()}}.';
+      error.value = message;
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  async function remove(id: number | string): Promise<void> {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      const encryptedId = cryptoService.encryptId(String(id));
+      await api.delete('/{{kebabName}}/' + encryptedId);
+      await list();
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Erro ao eliminar {{singularLabel.toLowerCase()}}.';
+      error.value = message;
+      throw err;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  return {
+    {{name}}s,
+    current{{pascalName}},
+    isLoading,
+    error,
+    clearError,
+    list,
+    find,
+    create,
+    update,
+    remove
+  };
+});

@@ -1,0 +1,5 @@
+import { {{name}}Repository } from "../repository/{{snakeName}}.repository.js";
+import { CrudRoutes } from "./base/crud.routes.js";
+
+const routerInstance = new CrudRoutes({{name}}Repository, '{{kebabName}}')?.router;
+export const {{name}}Routes = routerInstance;

@@ -1,0 +1,22 @@
+import { z } from 'zod';
+import { Crud } from "./base/crud.repository.js";
+
+export const create{{pascalName}}Schema = z.object({
+{{createSchemaFields}}
+});
+
+export const update{{pascalName}}Schema = create{{pascalName}}Schema.partial();
+
+export type Create{{pascalName}}Input = z.infer<typeof create{{pascalName}}Schema>;
+export type Update{{pascalName}}Input = z.infer<typeof update{{pascalName}}Schema>;
+
+class {{pascalName}}Repository extends Crud {
+    constructor() {
+        super("{{name}}", {
+            create: create{{pascalName}}Schema,
+            update: update{{pascalName}}Schema
+        });
+    }
+}
+
+export const {{name}}Repository = new {{pascalName}}Repository();
