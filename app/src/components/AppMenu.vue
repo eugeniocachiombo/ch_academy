@@ -13,51 +13,15 @@
 
       <div class="menu-section">PRINCIPAL</div>
 
-      <nav class="app-nav">
-        <RouterLink to="/" class="menu-item" @click="$emit('close')">
-          <i class="pi pi-home"></i>
-          <span>Dashboard</span>
-        </RouterLink>
-        
-        <RouterLink to="/anos-lectivos" class="menu-item" @click="$emit('close')">
-          <i class="pi pi-book"></i>
-          <span>Ano Lectivo</span>
-        </RouterLink>
+      <nav class="app-nav" id="app-nav">
 
-        <RouterLink to="/cursos" class="menu-item" @click="$emit('close')">
-          <i class="pi pi-book"></i>
-          <span>Cursos</span>
-        </RouterLink>
-
-        <RouterLink to="/classes" class="menu-item" @click="$emit('close')">
-          <i class="pi pi-book"></i>
-          <span>Classes</span>
-        </RouterLink>
-
-        <RouterLink to="/disciplinas" class="menu-item" @click="$emit('close')">
-          <i class="pi pi-book"></i>
-          <span>Disciplinas</span>
-        </RouterLink>
-
-        <RouterLink to="/funções" class="menu-item" @click="$emit('close')">
-          <i class="pi pi-book"></i>
-          <span>Funções</span>
-        </RouterLink>
-
-        <RouterLink to="/permissões" class="menu-item" @click="$emit('close')">
-          <i class="pi pi-book"></i>
-          <span>Permissões</span>
-        </RouterLink>
-
-        <RouterLink to="/funcões-usuario" class="menu-item" @click="$emit('close')">
-          <i class="pi pi-book"></i>
-          <span>Funções do Usuário</span>
-        </RouterLink>
-
-        <RouterLink to="/permissões-funcões" class="menu-item" @click="$emit('close')">
-          <i class="pi pi-book"></i>
-          <span>Permissões de Funções</span>
-        </RouterLink>
+        <span v-for="(item, i) in menuList">
+            <RouterLink v-if="item.permition" :to="item.link" class="menu-item" @click="$emit('close')">
+              <i :class="item.icon"></i>
+              <span  class="span">{{item.label}}</span>
+            </RouterLink>
+        </span>
+       
       </nav>
 
       <div class="sidebar-footer">
@@ -65,7 +29,7 @@
           <i class="pi pi-info-circle"></i>
           <div>
             <strong>Dev.</strong>
-            <small>Eugénio Cachiombo</small>
+            <small id="small">Eugénio Cachiombo</small>
           </div>
         </div>
       </div>
@@ -74,6 +38,76 @@
 </template>
 
 <script setup>
+import { computed, onMounted, ref, watch } from 'vue';
+import {useUserStore} from '@/stores/user.store.ts'
+
+const user = useUserStore();
+const menuList = ref([]);
+
+function getList(){
+  menuList.value = [
+    {
+      label: 'Dashboard',
+      link: '/dashboard',
+      icon: 'pi pi-home',
+      permition: true,
+    },
+    {
+      label: 'Ano Lectivo',
+      link: '/anos-lectivos',
+      icon: 'pi pi-book',
+      permition: user.getPermition('academic_year.view'),
+    },
+    {
+      label: 'Cursos',
+      link: '/cursos',
+      icon: 'pi pi-book',
+      permition: user.getPermition('course.view'),
+    },
+    {
+      label: 'Classes',
+      link: '/classes',
+      icon: 'pi pi-book',
+      permition: user.getPermition('class.view'),
+    },
+    {
+      label: 'Disciplinas',
+      link: '/disciplinas',
+      icon: 'pi pi-book',
+      permition: user.getPermition('subject.view'),
+    },
+    {
+      label: 'Funções',
+      link: '/funções',
+      icon: 'pi pi-book',
+      permition: user.getPermition('role.view'),
+    },
+    {
+      label: 'Permissões',
+      link: '/permissões',
+      icon: 'pi pi-book',
+      permition: user.getPermition('permition.view'),
+    },
+    {
+      label: 'Funções do Usuário',
+      link: '/funcões-usuario',
+      icon: 'pi pi-book',
+      permition: user.getPermition('user_role.view'),
+    },
+    {
+      label: 'Permissões de Funções',
+      link: '/permissões-funcões',
+      icon: 'pi pi-book',
+      permition: user.getPermition('role_permition.view'),
+    },
+  ]; 
+}
+
+onMounted(async()=>{
+  await user.initUser();
+  getList();
+})
+
 defineProps({
   visible: Boolean
 });

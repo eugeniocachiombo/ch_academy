@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { api } from '@/services/api';
 import cryptoService from '../services/crypto.service';
+import {can} from '@/services/permition.service.ts'
 
 export interface Category {
   id: number;
@@ -153,6 +154,26 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  function getPermition(permiName){
+    const permitions = can(currentUser?.value?.id)
+    // Saida em arrays
+    const list = [];
+    permitions.forEach((e) => {
+      list.push(e.join(', '))
+    });
+  
+    // saida em textos
+    let result = false;
+    list.forEach((e) => {
+      if(e.includes(permiName)) {
+        result = true;
+        return
+      };
+    });
+   
+    return result;
+  }
+
   // Executa a verificação ao instanciar a store
   initUser();
 
@@ -164,6 +185,7 @@ export const useUserStore = defineStore('user', () => {
     error,
     isAuthenticated,
     userName,
+    getPermition,
     clearError,
     list,
     login,
