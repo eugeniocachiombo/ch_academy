@@ -1,0 +1,117 @@
+/* ==========================================================================
+   THEME OVERRIDES — importar por ÚLTIMO no main.js/main.ts,
+   depois do PrimeVue e depois dos outros CSS do projeto.
+   Ex.: import './assets/theme-overrides.css'
+   ========================================================================== */
+
+/* -------------------------------------------------------------------------
+   1. TOKENS DO PRIMEVUE (v4 / Aura) — escala de verde "ardósia"
+   Se o projeto usa PrimeVue 4 com tokens (--p-*), isso reskina
+   automaticamente botões, inputs, checkboxes, paginação etc.
+   ------------------------------------------------------------------------- */
+   :root {
+    --p-primary-50: #EDF2EA;
+    --p-primary-100: #D3E0CB;
+    --p-primary-200: #B4CBA8;
+    --p-primary-300: #91B27F;
+    --p-primary-400: #6C9459;
+  
+    --p-focus-ring-color: #C08A2E !important;
+  
+    --p-font-family: 'Work Sans', ui-sans-serif, system-ui, sans-serif !important;
+  }
+  
+  /* -------------------------------------------------------------------------
+     2. FALLBACK "À FORÇA" — cobre PrimeVue 3 (temas clássicos como
+     lara-light-indigo, que NÃO respondem a variáveis) e qualquer
+     estilo local/scoped que esteja competindo com o global.
+     ------------------------------------------------------------------------- */
+  body,
+  .p-component,
+  .p-button,
+  .app-shell {
+    font-family: 'Work Sans', ui-sans-serif, system-ui, sans-serif !important;
+  }
+  
+  h1, h2, h3, h4,
+  .page-heading h1,
+  .p-dialog-title,
+  .card-title-row {
+    font-family: 'Fraunces', Georgia, serif !important;
+  }
+  
+  .p-button,
+  .p-button.p-component {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+  }
+  
+  .p-button-primary,
+  .p-button.p-button-primary {
+    background: #2F5233 !important;
+    border-color: #2F5233 !important;
+    color: #FFFFFF !important;
+  }
+  .p-button-primary:not(:disabled):hover {
+    background: #244027 !important;
+    border-color: #244027 !important;
+  }
+  
+  .p-button-secondary,
+  .p-button.p-button-secondary {
+    background: #FFFFFF !important;
+    border-color: #E3DAC3 !important;
+    color: #23291F !important;
+  }
+  .p-button-secondary:not(:disabled):hover {
+    background: #EFE9D8 !important;
+  }
+  
+  .p-button-warning,
+  .p-button.p-button-warning {
+    background: #C08A2E !important;
+    border-color: #C08A2E !important;
+    color: #201404 !important;
+  }
+  
+  .p-button-danger,
+  .p-button.p-button-danger {
+    background: #B3261E !important;
+    border-color: #B3261E !important;
+    color: #FFFFFF !important;
+  }
+  
+  .p-button-outlined.p-button-primary,
+  .p-button.p-button-outlined.p-button-primary {
+    background: transparent !important;
+    color: #2F5233 !important;
+    border-color: #2F5233 !important;
+  }
+  
+  .p-button-text.p-button-primary,
+  .p-button.p-button-text.p-button-primary {
+    background: transparent !important;
+    color: #2F5233 !important;
+  }
+  
+  .p-button-rounded {
+    border-radius: 999px !important;
+  }
+  
+  /* Topbar / Sidebar — força mesmo se AppTopbar.vue / AppMenu.vue
+     tiverem <style scoped> local competindo com o CSS global. */
+  .app-topbar {
+    background: rgba(246, 242, 232, .92) !important;
+    border-bottom: 1px solid #E3DAC3 !important;
+    backdrop-filter: blur(12px) !important;
+  }
+  
+  .app-sidebar {
+    background: #1B2A22 !important;
+    background-image: linear-gradient(180deg, #1B2A22 0%, #16211A 100%) !important;
+  }
+  
+  .menu-item.router-link-active {
+    background: rgba(192, 138, 46, .16) !important;
+    border-left: 3px solid #C08A2E !important;
+  }

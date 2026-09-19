@@ -7,6 +7,7 @@ import Aura from '@primeuix/themes/aura';
 // import { registerSW } from 'virtual:pwa-register'
 import 'primeicons/primeicons.css';
 import '@/assets/styles.css';
+import '@/assets/theme-overrides.css'; // ⚠️ tem que vir DEPOIS de styles.css
 
 import App from './App.vue';
 import router from './router';

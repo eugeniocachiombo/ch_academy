@@ -161,8 +161,3 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
-.textcolor {
-  color: var(--text-color);
-}
-</style>

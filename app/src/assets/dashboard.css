@@ -10,17 +10,17 @@ section {
 .dashboard-card {
   background: var(--surface-card) !important;
   border: 1px solid var(--surface-border) !important;
-  border-radius: var(--radius, 14px);
+  border-radius: var(--radius, 10px);
   color: var(--text-color);
-  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.045);
+  box-shadow: 0 1px 2px rgba(35, 41, 31, 0.05);
 }
 html.app-dark,
 .app-dark {
-  --surface-ground: #09090b;
-  --surface-card: #111827;
-  --surface-border: #27272a;
-  --text-color: #f4f4f5;
-  --text-color-secondary: #a1a1aa;
+  --surface-ground: #10160E;
+  --surface-card: #1A2318;
+  --surface-border: #2C3A27;
+  --text-color: #F1EEDF;
+  --text-color-secondary: #A9A08C;
 }
 .app-dark .dashboard-card {
   box-shadow: none;
@@ -82,7 +82,7 @@ html.app-dark,
 }
 
 .p-error-message {
-  color: #ef4444;
+  color: #B3261E;
   font-size: 0.75rem;
   margin-top: 0.25rem;
   display: flex;
@@ -95,7 +95,7 @@ html.app-dark,
 :deep(.p-inputtext.p-invalid),
 :deep(.p-inputnumber.p-invalid .p-inputnumber-input),
 :deep(.p-textarea.p-invalid) {
-  border-color: #ef4444 !important;
+  border-color: #B3261E !important;
 }
 
 /* Garante o destaque também quando o campo com erro recebe foco */
@@ -104,8 +104,8 @@ html.app-dark,
 :deep(.p-inputtext.p-invalid:focus),
 :deep(.p-inputnumber.p-invalid .p-inputnumber-input:focus),
 :deep(.p-textarea.p-invalid:focus) {
-  border-color: #ef4444 !important;
-  box-shadow: 0 0 0 1px #ef4444 !important;
+  border-color: #B3261E !important;
+  box-shadow: 0 0 0 1px #B3261E !important;
 }
 
 :deep(.p-dialog) {
@@ -113,7 +113,7 @@ html.app-dark,
   border: 1px solid var(--surface-border) !important;
   color: var(--text-color) !important;
   border-radius: var(--radius, 12px) !important;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 20px 25px -5px rgba(27, 42, 34, 0.2) !important;
 }
 
 :deep(.p-dialog .p-dialog-header) {
@@ -124,6 +124,7 @@ html.app-dark,
 
 :deep(.p-dialog .p-dialog-title) {
   color: var(--text-color) !important;
+  font-family: var(--font-display, 'Fraunces', serif) !important;
   font-weight: 600 !important;
 }
 
@@ -147,7 +148,7 @@ html.app-dark,
 }
 
 :deep(.p-dialog-mask) {
-  background: rgba(0, 0, 0, 0.4) !important;
+  background: rgba(16, 22, 14, 0.45) !important;
 }
 
 :deep(.p-inputtext),
@@ -204,7 +205,7 @@ html.app-dark,
   background: var(--surface-card) !important;
   border: 1px solid var(--surface-border) !important;
   border-radius: 8px !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 10px 25px -5px rgba(27, 42, 34, 0.2) !important;
 }
 
 :deep(.p-select-overlay .p-select-list),
@@ -238,7 +239,7 @@ html.app-dark,
   justify-content: center;
   padding: 2rem 1rem;
   text-align: center;
-  color: var(--text-color-secondary, #6c757d);
+  color: var(--text-color-secondary, #746C5A);
 }
 
 .empty-state p {

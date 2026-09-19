@@ -4,6 +4,7 @@
   flex-direction: column;
   gap: 1.5rem;
   animation: fadeIn 200ms ease-in-out;
+  font-family: var(--font-body, 'Work Sans', sans-serif);
 }
 
 @keyframes fadeIn {
@@ -39,18 +40,22 @@
 }
 
 .page-heading h1 {
+  font-family: var(--font-display, 'Fraunces', serif);
   font-size: 1.625rem;
-  font-weight: 700;
+  font-weight: 600;
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   color: var(--text-color);
 }
 
 .count-badge {
   font-size: 0.75rem;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 6px;
   padding: 0.15rem 0.6rem;
+  background: var(--primary-soft, #E4EBE1);
+  color: var(--primary, #2F5233);
+  border: 1px solid var(--surface-border);
 }
 
 .page-heading p {
@@ -61,12 +66,13 @@
 
 .btn-add {
   font-weight: 600;
+  border-radius: 8px !important;
   transition: transform 150ms ease, box-shadow 150ms ease;
 }
 
 .btn-add:not(:disabled):hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 10px rgba(47, 82, 51, 0.18);
 }
 
 .btn-add:not(:disabled):active {
@@ -130,7 +136,8 @@
 }
 
 .search-input:focus {
-  box-shadow: 0 0 0 3px var(--primary-color-focus, rgba(59, 130, 246, 0.15));
+  box-shadow: 0 0 0 3px var(--primary-soft, rgba(47, 82, 51, 0.18));
+  border-color: var(--primary);
 }
 
 .clear-search-btn {
@@ -163,10 +170,8 @@
   color: var(--text-color-secondary);
   font-weight: 600;
   font-size: 0.8125rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   padding: 0.875rem 1.25rem;
-  border-bottom: 1px solid var(--surface-border);
+  border-bottom: 2px solid var(--accent, #C08A2E);
 }
 
 .custom-datatable :deep(.p-datatable-tbody > tr) {
@@ -221,8 +226,8 @@
 }
 
 .custom-datatable :deep(.p-paginator-page.p-highlight) {
-  background: var(--primary-color);
-  color: var(--primary-color-text, #ffffff);
+  background: var(--primary);
+  color: #fff;
 }
 
 .custom-datatable :deep(.p-paginator-rpp-options.p-dropdown),
@@ -252,8 +257,8 @@
   font-family: var(--font-family-monospace, monospace);
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--text-color-secondary);
-  background: var(--surface-ground);
+  color: var(--primary-dark, #1E3823);
+  background: var(--primary-soft, #E4EBE1);
   padding: 0.2rem 0.5rem;
   border-radius: 6px;
   border: 1px solid var(--surface-border);
@@ -306,20 +311,22 @@
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 50%;
-  background: var(--surface-ground);
+  background: var(--primary-soft, #E4EBE1);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1rem;
+  border: 1px dashed var(--surface-border);
 }
 
 .empty-icon-wrapper i {
   font-size: 1.5rem;
-  color: var(--text-color-secondary);
+  color: var(--primary);
 }
 
 .empty-title {
-  font-size: 1rem;
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.0625rem;
   font-weight: 600;
   margin: 0 0 0.25rem 0;
   color: var(--text-color);
@@ -351,7 +358,7 @@
 
 .required-label::after {
   content: ' *';
-  color: var(--red-500, #ef4444);
+  color: var(--red-500, #B3261E);
 }
 
 .input-wrapper {
@@ -365,11 +372,11 @@
 }
 
 .search-input-field:focus {
-  border-color: var(--primary-color) !important;
+  border-color: var(--primary) !important;
 }
 
 .p-error-message {
-  color: var(--red-500, #ef4444);
+  color: var(--red-500, #B3261E);
   display: flex;
   align-items: center;
   gap: 0.35rem;
