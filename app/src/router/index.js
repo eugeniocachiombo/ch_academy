@@ -28,6 +28,11 @@ const routes = [
         name: "dashboard",
         component: () => import("@/views/DashboardView.vue"),
       },
+      {
+        path: "anos-lectivos",
+        name: "academic_year",
+        component: () => import("@/views/AcademicYear/Index.vue"),
+      },
     ],
   },
   {

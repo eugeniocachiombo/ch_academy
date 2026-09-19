@@ -4,7 +4,7 @@
 
     <aside class="app-sidebar" :class="{ 'is-open': visible }">
       <div class="brand">
-        <div class="brand-logo">K</div>
+        <div class="brand-logo">CH</div>
         <div>
           <strong>CH Academic</strong>
           <small>Gestão Escolar</small>
@@ -17,6 +17,10 @@
         <RouterLink to="/" class="menu-item" @click="$emit('close')">
           <i class="pi pi-home"></i>
           <span>Dashboard</span>
+        </RouterLink>
+        <RouterLink to="/anos-lectivos" class="menu-item" @click="$emit('close')">
+          <i class="pi pi-book"></i>
+          <span>Ano Lectivo</span>
         </RouterLink>
       </nav>
 
