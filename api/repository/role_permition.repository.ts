@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Crud } from "./base/crud.repository.js";
+import { prisma } from '../lib/prisma';
 
 export const createRolePermitionSchema = z.object({
     permition_id: z.number("A permissão é obrigatória"),
@@ -16,6 +17,12 @@ class RolePermitionRepository extends Crud {
         super("rolePermition", {
             create: createRolePermitionSchema,
             update: updateRolePermitionSchema
+        });
+    }
+
+    async list() {
+        return prisma.rolePermition.findMany({
+            include: {permition: true, role: true}
         });
     }
 }

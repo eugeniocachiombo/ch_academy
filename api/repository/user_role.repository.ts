@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Crud } from "./base/crud.repository.js";
+import { prisma } from '../lib/prisma';
 
 export const createUserRoleSchema = z.object({
     user_id: z.number("O usuário é obrigatório"),
@@ -16,6 +17,12 @@ class UserRoleRepository extends Crud {
         super("userRole", {
             create: createUserRoleSchema,
             update: updateUserRoleSchema
+        });
+    }
+
+    async list() {
+        return prisma.userRole.findMany({
+            include: {role: true}
         });
     }
 }
