@@ -32,7 +32,7 @@ export class CrudRoutes {
             }
         });
 
-        this.router.get(`/${this.name}:id`, async (req: Request, res: Response) => {
+        this.router.get(`/${this.name}/:id`, async (req: Request, res: Response) => {
             try {
                 const id = cryptoService.decryptId(String(req.params.id));
                 const item = await this.repository.find(id);
@@ -42,7 +42,7 @@ export class CrudRoutes {
             }
         });
 
-        this.router.put(`/${this.name}:id`, async (req: Request, res: Response) => {
+        this.router.put(`/${this.name}/:id`, async (req: Request, res: Response) => {
             try {
                 const id = cryptoService.decryptId(String(req.params.id));
                 const updatedItem = await this.repository.update(id, req.body);
@@ -52,7 +52,7 @@ export class CrudRoutes {
             }
         });
 
-        this.router.delete(`/${this.name}:id`, async (req: Request, res: Response) => {
+        this.router.delete(`/${this.name}/:id`, async (req: Request, res: Response) => {
             try {
                 const id = cryptoService.decryptId(String(req.params.id));
                 await this.repository.delete(id);
