@@ -33,6 +33,11 @@
           <i class="pi pi-book"></i>
           <span>Classes</span>
         </RouterLink>
+
+        <RouterLink to="/disciplinas" class="menu-item" @click="$emit('close')">
+          <i class="pi pi-book"></i>
+          <span>Disciplinas</span>
+        </RouterLink>
       </nav>
 
       <div class="sidebar-footer">
