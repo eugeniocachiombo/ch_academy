@@ -81,6 +81,8 @@ const dialogFieldsTemplate = model.fields.map(f => {
           :options="${f.name}Options"
           optionLabel="label"
           optionValue="value"
+          filter
+          showClear
           placeholder="${f.placeholder}"
           class="w-full theme-input"
           :disabled="isLoading"
