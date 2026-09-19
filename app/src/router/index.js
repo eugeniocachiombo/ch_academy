@@ -38,6 +38,11 @@ const routes = [
         name: "course",
         component: () => import("@/views/Course/Index.vue"),
       },
+      {
+        path: "classes",
+        name: "class",
+        component: () => import("@/views/Class/Index.vue"),
+      },
     ],
   },
   {
