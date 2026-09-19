@@ -1,0 +1,185 @@
+/**
+ * Gerador de Scaffold (Node.js Puro com Stubs Externos)
+ * Execução: node generate.js
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+// ==========================================
+// 1. DEFINIÇÃO ÚNICA DO MODELO
+// ==========================================
+const model = {
+  name: 'academicYear',  // Nome no camelCase (ex: academicYear)
+  kebabName: 'academic-years', // Nome em kebab-case para rotas e APIs
+  pascalName: 'AcademicYear',  // Nome em PascalCase para classes e componentes
+  pluralLabel: 'Anos Lectivos',
+  singularLabel: 'Ano Lectivo',
+  
+  fields: [
+    {
+      name: 'name',
+      label: 'Nome do Ano Lectivo',
+      type: 'string',
+      inputType: 'input',  // input, dropdown, textarea, date, select
+      placeholder: 'Ex: 2026 / 2027',
+      zodRule: 'z.string().min(4, "O nome deve ter pelo menos 4 caracteres")',
+      required: true
+    },
+    {
+      name: 'status',
+      label: 'Status',
+      type: 'string',
+      inputType: 'dropdown',  // input, dropdown, textarea, date, select
+      placeholder: 'Selecione o status',
+      options: [
+        { label: 'Activa', value: 'activa' },
+        { label: 'Inactiva', value: 'inactiva' }
+      ],
+      defaultValue: 'activa',
+      required: false
+    }
+  ]
+};
+
+// ==========================================
+// 2. PROCESSADORES E AUXILIARES
+// ==========================================
+function toSnakeCase(str) {
+  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+}
+
+const snakeName = toSnakeCase(model.name);
+const pascalName = model.pascalName;
+const name = model.name;
+const kebabName = model.kebabName;
+const pluralLabel = model.pluralLabel;
+const singularLabel = model.singularLabel;
+
+// Geração de trechos para substituição
+const createSchemaFields = model.fields.map(f => `    ${f.name}: ${f.zodRule}`).join(',\n');
+const interfaceFields = model.fields.map(f => `  ${f.name}: ${f.type};`).join('\n');
+const payloadFields = model.fields.map(f => `  ${f.name}${f.required ? '' : '?'}: ${f.type};`).join('\n');
+const updatePayloadFields = model.fields.map(f => `  ${f.name}?: ${f.type};`).join('\n');
+
+const formReactiveFields = model.fields.map(f => `  ${f.name}: ${f.defaultValue !== undefined ? (typeof f.defaultValue === 'string' ? `'${f.defaultValue}'` : f.defaultValue) : "''"}`).join(',\n');
+
+const dropdownOptionsDefinitions = model.fields
+  .filter(f => f.inputType === 'dropdown' && f.options)
+  .map(f => `const ${f.name}Options = ${JSON.stringify(f.options, null, 2)};`).join('\n\n');
+
+const watchInitialDataAssign = model.fields.map(f => `      form.${f.name} = newValue.${f.name} || ${f.defaultValue !== undefined ? (typeof f.defaultValue === 'string' ? `'${f.defaultValue}'` : f.defaultValue) : "''"};`).join('\n');
+const watchInitialDataReset = model.fields.map(f => `      form.${f.name} = ${f.defaultValue !== undefined ? (typeof f.defaultValue === 'string' ? `'${f.defaultValue}'` : f.defaultValue) : "''"};`).join('\n');
+
+const dialogFieldsTemplate = model.fields.map(f => {
+  if (f.inputType === 'dropdown') {
+    return `      <div class="field">
+        <label for="${name}-${f.name}" class="${f.required ? 'required-label ' : ''}font-medium text-sm">${f.label}</label>
+        <Dropdown
+          id="${name}-${f.name}"
+          v-model="form.${f.name}"
+          :options="${f.name}Options"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="${f.placeholder}"
+          class="w-full theme-input"
+          :disabled="isLoading"
+        />
+      </div>`;
+  } else if (f.inputType === 'textarea') {
+    return `      <div class="field">
+        <label for="${name}-${f.name}" class="${f.required ? 'required-label ' : ''}font-medium text-sm">${f.label}</label>
+        <Textarea
+          id="${name}-${f.name}"
+          v-model="form.${f.name}"
+          placeholder="${f.placeholder}"
+          class="w-full theme-input"
+          :class="{ 'p-invalid': !!fieldErrors.${f.name} }"
+          :disabled="isLoading"
+          rows="3"
+        />
+        <small v-if="fieldErrors.${f.name}" class="p-error-message" role="alert"><i class="pi pi-exclamation-circle"></i><span>{{ getErrorMessage(fieldErrors.${f.name}) }}</span></small>
+      </div>`;
+  } else {
+    return `      <div class="field">
+        <label for="${name}-${f.name}" class="${f.required ? 'required-label ' : ''}font-medium text-sm">${f.label}</label>
+        <InputText
+          id="${name}-${f.name}"
+          v-model="form.${f.name}"
+          placeholder="${f.placeholder}"
+          class="w-full search-input-field theme-input"
+          :class="{ 'p-invalid': !!fieldErrors.${f.name} }"
+          :disabled="isLoading"
+        />
+        <small v-if="fieldErrors.${f.name}" class="p-error-message" role="alert"><i class="pi pi-exclamation-circle"></i><span>{{ getErrorMessage(fieldErrors.${f.name}) }}</span></small>
+      </div>`;
+  }
+}).join('\n\n');
+
+const searchFiltersCode = model.fields.map(f => `      const item_${f.name} = String(item.${f.name} || '').toLowerCase();`).join('\n');
+const searchConditionOr = model.fields.map(f => `item_${f.name}.includes(q)`).join(' ||\n        ');
+
+const datatableColumns = model.fields.map(f => {
+  if (f.inputType === 'dropdown') {
+    return `          <Column field="${f.name}" header="${f.label}" style="width: 150px" sortable>
+            <template #body="{ data }">
+              <Tag :value="data.${f.name}" :severity="getStatusSeverity(data.${f.name})" />
+            </template>
+          </Column>`;
+  } else {
+    return `          <Column field="${f.name}" header="${f.label}" sortable>
+            <template #body="{ data }">
+              <span class="font-medium">{{ data.${f.name} }}</span>
+            </template>
+          </Column>`;
+  }
+}).join('\n\n');
+
+// ==========================================
+// 3. MOTOR DE COMPILAÇÃO E ESCRITA
+// ==========================================
+function renderStub(stubPath, data) {
+  let template = fs.readFileSync(stubPath, 'utf8');
+  return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+    return data[key] !== undefined ? data[key] : match;
+  });
+}
+
+function writeFile(filePath, content) {
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  fs.writeFileSync(filePath, content, 'utf8');
+  console.log(`[Gerado] ${filePath}`);
+}
+
+const templateData = {
+  name,
+  snakeName,
+  pascalName,
+  kebabName,
+  pluralLabel,
+  singularLabel,
+  createSchemaFields,
+  interfaceFields,
+  payloadFields,
+  updatePayloadFields,
+  formReactiveFields,
+  dropdownOptionsDefinitions,
+  watchInitialDataAssign,
+  watchInitialDataReset,
+  dialogFieldsTemplate,
+  searchFiltersCode,
+  searchConditionOr,
+  datatableColumns
+};
+
+// Gerar ficheiros a partir dos stubs externos
+writeFile(`api/repository/${snakeName}.repository.ts`, renderStub('stubs/repository.stub', templateData));
+writeFile(`api/routes/${snakeName}.routes.ts`, renderStub('stubs/routes.stub', templateData));
+writeFile(`app/src/stores/${name}.store.ts`, renderStub('stubs/store.stub', templateData));
+writeFile(`app/src/views/${pascalName}/Dialog.vue`, renderStub('stubs/dialog.stub', templateData));
+writeFile(`app/src/views/${pascalName}/Index.vue`, renderStub('stubs/index.stub', templateData));
+
+console.log('Scaffolding gerado com sucesso utilizando stubs externos!');
