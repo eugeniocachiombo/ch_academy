@@ -154,7 +154,18 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  let userRole = [];
+  async function init() {
+      userRole = await api.get<unknown, any[]>('/user-roles');; 
+  }
+  init();
+
   function getPermition(permiName){
+
+    // verificação admin
+    const admin = userRole.find((e) => e.user_id == currentUser?.value?.id && e.role_id == 1);
+    if(admin) return true;
+
     const permitions = can(currentUser?.value?.id)
     // Saida em arrays
     const list = [];
