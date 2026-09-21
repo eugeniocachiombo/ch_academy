@@ -11,10 +11,11 @@ import ProgressSpinner from 'primevue/progressspinner';
 import { useAcademicYearStore } from '@/stores/academic_year.store';
 import AcademicYearDialog from '@/views/AcademicYear/Dialog.vue';
 import { useToast } from 'primevue/usetoast';
-
+import { useUserStore } from '@/stores/user.store';
 
 const academicYearStore = useAcademicYearStore();
 const toast = useToast();
+const user = useUserStore();
 
 const isDialogVisible = ref(false);
 const isEditing = ref(false);
@@ -162,6 +163,7 @@ async function reloadData() {
 
 onMounted(async () => {
   await reloadData();
+  await user.initUser();
 });
 </script>
 
@@ -184,6 +186,7 @@ onMounted(async () => {
       <div class="heading-actions">
         <Button
           label="Novo ano lectivo"
+          v-if="user.getPermition('academic_year.create')"
           icon="pi pi-plus"
           class="p-button-primary btn-add"
           :disabled="academicYearStore.isLoading"
@@ -313,6 +316,7 @@ onMounted(async () => {
                 </p>
                 <Button
                   label="Criar Novo Ano Lectivo"
+                  v-if="user.getPermition('academic_year.create')"
                   icon="pi pi-plus"
                   class="p-button-primary p-button-sm mt-3"
                   @click="openCreateDialog"
@@ -344,6 +348,7 @@ onMounted(async () => {
               <div class="action-buttons">
                 <Button
                   icon="pi pi-pencil"
+                  v-if="user.getPermition('academic_year.update')"
                   class="p-button-text p-button-rounded p-button-warning action-btn"
                   v-tooltip.top="'Editar'"
                   aria-label="Editar Ano Lectivo"
@@ -351,6 +356,7 @@ onMounted(async () => {
                 />
                 <Button
                   icon="pi pi-trash"
+                  v-if="user.getPermition('academic_year.delete')"
                   class="p-button-text p-button-rounded p-button-danger action-btn"
                   v-tooltip.top="'Eliminar'"
                   aria-label="Eliminar Ano Lectivo"

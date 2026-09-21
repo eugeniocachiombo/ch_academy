@@ -11,9 +11,11 @@ import ProgressSpinner from 'primevue/progressspinner';
 import { useRoleStore } from '@/stores/role.store';
 import RoleDialog from '@/views/Role/Dialog.vue';
 import { useToast } from 'primevue/usetoast';
+import { useUserStore } from '@/stores/user.store.ts';
 
 const roleStore = useRoleStore();
 const toast = useToast();
+const user = useUserStore();
 
 const pluralLabel = 'Funções';
 const singularLabel = 'Função';
@@ -130,6 +132,7 @@ async function reloadData() {
 
 onMounted(async () => {
   await reloadData();
+  await user.initUser();
 });
 </script>
 
@@ -144,7 +147,12 @@ onMounted(async () => {
         <p>Gerencie os {{pluralLabel.toLowerCase()}} do sistema.</p>
       </div>
       <div class="heading-actions">
-        <Button label="Novo Função" icon="pi pi-plus" class="p-button-primary btn-add" :disabled="roleStore.isLoading" @click="openCreateDialog" />
+        <Button label="Novo Função" 
+          v-if="user.getPermition('role.create')"
+          icon="pi pi-plus" 
+          class="p-button-primary btn-add" 
+          :disabled="roleStore.isLoading" 
+          @click="openCreateDialog" />
       </div>
     </header>
 
@@ -219,8 +227,12 @@ onMounted(async () => {
           <Column header="Acções" style="width: 140px; text-align: center">
             <template #body="{ data }">
               <div class="action-buttons">
-                <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-warning action-btn" @click="openEditDialog(data)" />
-                <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-danger action-btn" @click="confirmDelete(data)" />
+                <Button icon="pi pi-pencil"
+                  v-if="user.getPermition('role.update')"
+                  class="p-button-text p-button-rounded p-button-warning action-btn" @click="openEditDialog(data)" />
+                <Button icon="pi pi-trash"
+                  v-if="user.getPermition('role.delete')"
+                  class="p-button-text p-button-rounded p-button-danger action-btn" @click="confirmDelete(data)" />
               </div>
             </template>
           </Column>

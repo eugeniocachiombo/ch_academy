@@ -13,10 +13,12 @@ import ClassDialog from '@/views/Class/Dialog.vue';
 import { useToast } from 'primevue/usetoast';
 import {findModel} from '@/services/general.service.js' 
 import {useCourseStore} from '@/stores/course.store'
+import {useUserStore} from '@/stores/user.store.ts'
 
 const classStore = useClassStore();
 const courseStore = useCourseStore();
 const toast = useToast();
+const user = useUserStore();
 
 const pluralLabel = 'Classes';
 const singularLabel = 'Classe';
@@ -137,6 +139,7 @@ async function reloadData() {
 
 onMounted(async () => {
   await reloadData();
+  await user.initUser();
 });
 </script>
 
@@ -151,7 +154,12 @@ onMounted(async () => {
         <p>Gerencie as {{pluralLabel.toLowerCase()}} do sistema.</p>
       </div>
       <div class="heading-actions">
-        <Button label="Nova Classe" icon="pi pi-plus" class="p-button-primary btn-add" :disabled="classStore.isLoading" @click="openCreateDialog" />
+        <Button label="Nova Classe" 
+          v-if="user.getPermition('class.create')"
+          icon="pi pi-plus" 
+          class="p-button-primary btn-add" 
+          :disabled="classStore.isLoading" 
+          @click="openCreateDialog" />
       </div>
     </header>
 
@@ -209,7 +217,11 @@ onMounted(async () => {
           <template #empty>
             <div class="empty-state">
               <p class="empty-title">Ainda não existem registos</p>
-              <Button label="Criar Nova" icon="pi pi-plus" class="p-button-primary p-button-sm mt-3" @click="openCreateDialog" />
+              <Button label="Criar Nova" 
+                v-if="user.getPermition('class.create')"
+                icon="pi pi-plus" 
+                class="p-button-primary p-button-sm mt-3" 
+                @click="openCreateDialog" />
             </div>
           </template>
 
@@ -232,8 +244,14 @@ onMounted(async () => {
           <Column header="Acções" style="width: 140px; text-align: center">
             <template #body="{ data }">
               <div class="action-buttons">
-                <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-warning action-btn" @click="openEditDialog(data)" />
-                <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-danger action-btn" @click="confirmDelete(data)" />
+                <Button icon="pi pi-pencil" 
+                  v-if="user.getPermition('class.update')"
+                  class="p-button-text p-button-rounded p-button-warning action-btn" 
+                  @click="openEditDialog(data)" />
+                <Button icon="pi pi-trash" 
+                  v-if="user.getPermition('class.delete')"
+                  class="p-button-text p-button-rounded p-button-danger action-btn" 
+                  @click="confirmDelete(data)" />
               </div>
             </template>
           </Column>

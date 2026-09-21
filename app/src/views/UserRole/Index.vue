@@ -13,12 +13,13 @@ import UserRoleDialog from '@/views/UserRole/Dialog.vue';
 import { useToast } from 'primevue/usetoast';
 import { useUserStore } from '@/stores/user.store';
 import { useRoleStore } from '@/stores/role.store';
-import {findModel} from '@/services/general.service.js'
+import { findModel } from '@/services/general.service.js';
 
 const userRoleStore = useUserRoleStore();
 const userStore = useUserStore();
 const roleStore = useRoleStore();
 const toast = useToast();
+const user = useUserStore();
 
 const pluralLabel = 'Funções Uusário';
 const singularLabel = 'Função Usuário';
@@ -139,6 +140,7 @@ async function reloadData() {
 
 onMounted(async () => {
   await reloadData();
+  await user.initUser();
 });
 </script>
 
@@ -153,7 +155,12 @@ onMounted(async () => {
         <p>Gerencie {{pluralLabel.toLowerCase()}} do sistema.</p>
       </div>
       <div class="heading-actions">
-        <Button label="Nova Função Usuário" icon="pi pi-plus" class="p-button-primary btn-add" :disabled="userRoleStore.isLoading" @click="openCreateDialog" />
+        <Button label="Nova Função Usuário"
+          v-if="user.getPermition('userRole.create')"
+          icon="pi pi-plus"
+          class="p-button-primary btn-add"
+          :disabled="userRoleStore.isLoading"
+          @click="openCreateDialog" />
       </div>
     </header>
 
@@ -211,7 +218,11 @@ onMounted(async () => {
           <template #empty>
             <div class="empty-state">
               <p class="empty-title">Ainda não existem registos</p>
-              <Button label="Criar Nova" icon="pi pi-plus" class="p-button-primary p-button-sm mt-3" @click="openCreateDialog" />
+              <Button label="Criar Nova"
+                v-if="user.getPermition('userRole.create')"
+                icon="pi pi-plus"
+                class="p-button-primary p-button-sm mt-3"
+                @click="openCreateDialog" />
             </div>
           </template>
 
@@ -234,8 +245,14 @@ onMounted(async () => {
           <Column header="Acções" style="width: 140px; text-align: center">
             <template #body="{ data }">
               <div class="action-buttons">
-                <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-warning action-btn" @click="openEditDialog(data)" />
-                <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-danger action-btn" @click="confirmDelete(data)" />
+                <Button icon="pi pi-pencil"
+                  v-if="user.getPermition('userRole.update')"
+                  class="p-button-text p-button-rounded p-button-warning action-btn"
+                  @click="openEditDialog(data)" />
+                <Button icon="pi pi-trash"
+                  v-if="user.getPermition('userRole.delete')"
+                  class="p-button-text p-button-rounded p-button-danger action-btn"
+                  @click="confirmDelete(data)" />
               </div>
             </template>
           </Column>
