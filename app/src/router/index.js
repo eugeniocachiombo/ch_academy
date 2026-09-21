@@ -82,6 +82,12 @@ const routes = [
         component: () => import("@/views/ClassRoom/Index.vue"),
         meta: { permition: 'class_room.view' },
       },
+      {
+        path: "turmas",
+        name: "class_section",
+        component: () => import("@/views/ClassSection/Index.vue"),
+        meta: { permition: 'class_section.view' },
+      },
     ],
   },
   {

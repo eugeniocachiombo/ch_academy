@@ -10,6 +10,7 @@ import { permitionRoutes } from "./routes/permition.routes.js";
 import { userRoleRoutes } from "./routes/user_role.routes.js";
 import { rolePermitionRoutes } from "./routes/role_permition.routes.js";
 import { classRoomRoutes } from "./routes/class_room.routes.js";
+import { classSectionRoutes } from "./routes/class_section.routes.js";
 const app = express();
 
 app.use(cors({
@@ -29,6 +30,7 @@ app.use("/api", permitionRoutes);
 app.use("/api", userRoleRoutes);
 app.use("/api", rolePermitionRoutes);
 app.use("/api", classRoomRoutes);
+app.use("/api", classSectionRoutes);
 
 app.get("/", (req, res) => {
   res.json({

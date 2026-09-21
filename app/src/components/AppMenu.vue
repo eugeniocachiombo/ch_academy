@@ -65,6 +65,12 @@ function getList(){
       permition: user.getPermition('class_room.view'),
     },
     {
+      label: 'Turmas',
+      link: '/turmas',
+      icon: 'pi pi-book',
+      permition: user.getPermition('class_section.view'),
+    },
+    {
       label: 'Cursos',
       link: '/cursos',
       icon: 'pi pi-book',
