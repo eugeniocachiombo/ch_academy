@@ -103,6 +103,7 @@ async function handleSave(formPayload) {
         life: 3500
       });
     }
+    selectedItem.value = {data: null};
   } catch (error) {
     const responseData = error?.response?.data;
     if (responseData?.errors) {
