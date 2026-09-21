@@ -1,5 +1,5 @@
 /**
- * Gerador de Scaffold (Node.js Puro com Stubs Externos)
+ * Gerador de Scaffold (Node.js Puro com Stubs)
  * Execução: node generate.js
  */
 
@@ -23,8 +23,23 @@ const model = {
       type: 'string',
       inputType: 'input',  // input, dropdown, textarea, date, select
       placeholder: 'Ex: 2026 / 2027',
-      zodRule: 'z.string().min(4, "O nome deve ter pelo menos 4 caracteres")',
+      zodRule: 'z.string().min(2, "O nome deve ter pelo menos 2 caracteres")',
       required: true
+    },
+    {
+      name: 'course_id',
+      label: 'Curso',
+      type: 'number',
+      inputType: 'relation',  // Define que é um campo de relação/FK
+      relation: {
+        modelName: 'course',       // Nome do modelo relacionado (camelCase)
+        pascalName: 'Course',     // PascalCase do modelo relacionado
+        pluralStoreVar: 'courses', // Nome do array reativo na store (ex: courseStore.courses)
+        displayField: 'name'       // Campo visível no dropdown/tabela (padrão: name)
+      },
+      placeholder: 'Selecione o Curso',
+      zodRule: 'z.number().nullable().optional()',
+      required: false
     },
     {
       name: 'status',
@@ -56,23 +71,96 @@ const kebabName = model.kebabName;
 const pluralLabel = model.pluralLabel;
 const singularLabel = model.singularLabel;
 
-// Geração de trechos para substituição
+// Identificação de campos de relação (por inputType ou sufixo _id)
+const relationFields = model.fields.filter(f => f.inputType === 'relation' || f.name.endsWith('_id'));
+
+// --- Processamento de Relações para o Index.vue ---
+const relationStoresImports = relationFields.map(f => {
+  const rel = f.relation;
+  return `import { use${rel.pascalName}Store } from '@/stores/${rel.modelName}.store';`;
+}).join('\n');
+
+const relationStoresInits = relationFields.map(f => {
+  const rel = f.relation;
+  return `const ${rel.modelName}Store = use${rel.pascalName}Store();`;
+}).join('\n');
+
+const relationReloads = relationFields.map(f => {
+  const rel = f.relation;
+  return `    await ${rel.modelName}Store.list();`;
+}).join('\n');
+
+// --- Processamento de Relações para o Dialog.vue ---
+const dialogRelationStoresImports = relationFields.map(f => {
+  const rel = f.relation;
+  return `import { use${rel.pascalName}Store } from '@/stores/${rel.modelName}.store';`;
+}).join('\n');
+
+const dialogRelationStoresInits = relationFields.map(f => {
+  const rel = f.relation;
+  return `const ${rel.modelName}Store = use${rel.pascalName}Store();`;
+}).join('\n');
+
+const dialogRelationOptionsComputed = relationFields.map(f => {
+  const rel = f.relation;
+  return `const ${f.name}Options = computed(() =>
+  ${rel.modelName}Store.${rel.pluralStoreVar}.map((e) => ({
+    label: e.${rel.displayField || 'name'},
+    value: e.id
+  }))
+);`;
+}).join('\n\n');
+
+const dialogRelationOnMounted = relationFields.map(f => {
+  const rel = f.relation;
+  return `  await ${rel.modelName}Store.list();`;
+}).join('\n');
+
+// --- Schemas, Interfaces e Formulário ---
 const createSchemaFields = model.fields.map(f => `    ${f.name}: ${f.zodRule}`).join(',\n');
 const interfaceFields = model.fields.map(f => `  ${f.name}: ${f.type};`).join('\n');
 const payloadFields = model.fields.map(f => `  ${f.name}${f.required ? '' : '?'}: ${f.type};`).join('\n');
 const updatePayloadFields = model.fields.map(f => `  ${f.name}?: ${f.type};`).join('\n');
 
-const formReactiveFields = model.fields.map(f => `  ${f.name}: ${f.defaultValue !== undefined ? (typeof f.defaultValue === 'string' ? `'${f.defaultValue}'` : f.defaultValue) : "''"}`).join(',\n');
+const formReactiveFields = model.fields.map(f => {
+  let defaultVal = "''";
+  if (f.inputType === 'relation' || f.name.endsWith('_id')) {
+    defaultVal = "null";
+  } else if (f.defaultValue !== undefined) {
+    defaultVal = typeof f.defaultValue === 'string' ? `'${f.defaultValue}'` : f.defaultValue;
+  }
+  return `  ${f.name}: ${defaultVal}`;
+}).join(',\n');
 
 const dropdownOptionsDefinitions = model.fields
   .filter(f => f.inputType === 'dropdown' && f.options)
   .map(f => `const ${f.name}Options = ${JSON.stringify(f.options, null, 2)};`).join('\n\n');
 
-const watchInitialDataAssign = model.fields.map(f => `      form.${f.name} = newValue.${f.name} || ${f.defaultValue !== undefined ? (typeof f.defaultValue === 'string' ? `'${f.defaultValue}'` : f.defaultValue) : "''"};`).join('\n');
-const watchInitialDataReset = model.fields.map(f => `      form.${f.name} = ${f.defaultValue !== undefined ? (typeof f.defaultValue === 'string' ? `'${f.defaultValue}'` : f.defaultValue) : "''"};`).join('\n');
+const watchInitialDataAssign = model.fields.map(f => {
+  let defaultVal = "''";
+  if (f.inputType === 'relation' || f.name.endsWith('_id')) {
+    defaultVal = "null";
+  } else if (f.defaultValue !== undefined) {
+    defaultVal = typeof f.defaultValue === 'string' ? `'${f.defaultValue}'` : f.defaultValue;
+  }
+  return `      form.${f.name} = newValue.${f.name} || ${defaultVal};`;
+}).join('\n');
 
+const watchInitialDataReset = model.fields.map(f => {
+  let defaultVal = "''";
+  if (f.inputType === 'relation' || f.name.endsWith('_id')) {
+    defaultVal = "null";
+  } else if (f.defaultValue !== undefined) {
+    defaultVal = typeof f.defaultValue === 'string' ? `'${f.defaultValue}'` : f.defaultValue;
+  }
+  return `      form.${f.name} = ${defaultVal};`;
+}).join('\n');
+
+// --- Campos do Formulário no Dialog ---
 const dialogFieldsTemplate = model.fields.map(f => {
-  if (f.inputType === 'dropdown') {
+  const isRelation = f.inputType === 'relation' || f.name.endsWith('_id');
+  
+  if (isRelation || f.inputType === 'dropdown') {
     return `      <div class="field">
         <label for="${name}-${f.name}" class="${f.required ? 'required-label ' : ''}font-medium text-sm">${f.label}</label>
         <Dropdown
@@ -118,11 +206,19 @@ const dialogFieldsTemplate = model.fields.map(f => {
   }
 }).join('\n\n');
 
+// --- Busca e Colunas da Tabela ---
 const searchFiltersCode = model.fields.map(f => `      const item_${f.name} = String(item.${f.name} || '').toLowerCase();`).join('\n');
 const searchConditionOr = model.fields.map(f => `item_${f.name}.includes(q)`).join(' ||\n        ');
 
 const datatableColumns = model.fields.map(f => {
-  if (f.inputType === 'dropdown') {
+  if (f.inputType === 'relation' || f.name.endsWith('_id')) {
+    const rel = f.relation;
+    return `          <Column field="${f.name}" header="${f.label}" style="width: 150px" sortable>
+            <template #body="{ data }">
+              <Tag :value="findModel(${rel.modelName}Store.${rel.pluralStoreVar}, data.${f.name})?.${rel.displayField || 'name'} ?? '---- ---- ----'" :severity="getStatusSeverity(data.${f.name})" />
+            </template>
+          </Column>`;
+  } else if (f.inputType === 'dropdown') {
     return `          <Column field="${f.name}" header="${f.label}" style="width: 150px" sortable>
             <template #body="{ data }">
               <Tag :value="data.${f.name}" :severity="getStatusSeverity(data.${f.name})" />
@@ -174,7 +270,14 @@ const templateData = {
   dialogFieldsTemplate,
   searchFiltersCode,
   searchConditionOr,
-  datatableColumns
+  datatableColumns,
+  relationStoresImports,
+  relationStoresInits,
+  relationReloads,
+  dialogRelationStoresImports,
+  dialogRelationStoresInits,
+  dialogRelationOptionsComputed,
+  dialogRelationOnMounted
 };
 
 // Gerar ficheiros a partir dos stubs externos

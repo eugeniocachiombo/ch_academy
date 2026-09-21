@@ -11,9 +11,14 @@ import ProgressSpinner from 'primevue/progressspinner';
 import { use{{pascalName}}Store } from '@/stores/{{name}}.store';
 import {{pascalName}}Dialog from '@/views/{{pascalName}}/Dialog.vue';
 import { useToast } from 'primevue/usetoast';
+import { findModel } from '@/services/general.service.js';
+import { useUserStore } from '@/stores/user.store.ts';
+{{relationStoresImports}}
 
 const {{name}}Store = use{{pascalName}}Store();
 const toast = useToast();
+const user = useUserStore();
+{{relationStoresInits}}
 
 const pluralLabel = '{{pluralLabel}}';
 const singularLabel = '{{singularLabel}}';
@@ -91,7 +96,7 @@ async function handleSave(formPayload) {
       isDialogVisible.value = false;
       toast.add({ severity: 'success', summary: 'Sucesso', detail: `${singularLabel} criado com sucesso.`, life: 3500 });
     }
-    selectedItem.value = {data: null};
+    selectedItem.value = { data: null };
   } catch (error) {
     const responseData = error?.response?.data;
     if (responseData?.errors) {
@@ -122,6 +127,7 @@ async function executeDelete() {
 
 async function reloadData() {
   try {
+{{relationReloads}}
     await {{name}}Store.list();
   } catch (error) {
     toast.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao carregar dados.', life: 5000 });
@@ -130,6 +136,7 @@ async function reloadData() {
 
 onMounted(async () => {
   await reloadData();
+  await user.initUser();
 });
 </script>
 
@@ -141,10 +148,17 @@ onMounted(async () => {
           <h1>{{pluralLabel}}</h1>
           <Tag v-if="{{name}}Store.{{name}}s" :value="{{name}}Store.{{name}}s.length" severity="info" class="count-badge" />
         </div>
-        <p>Gerencie os {{pluralLabel.toLowerCase()}} do sistema.</p>
+        <p>Gerencie {{pluralLabel.toLowerCase()}} do sistema.</p>
       </div>
       <div class="heading-actions">
-        <Button label="Novo {{singularLabel}}" icon="pi pi-plus" class="p-button-primary btn-add" :disabled="{{name}}Store.isLoading" @click="openCreateDialog" />
+        <Button
+          v-if="user.getPermition('{{name}}.create')"
+          label="Novo {{singularLabel}}"
+          icon="pi pi-plus"
+          class="p-button-primary btn-add"
+          :disabled="{{name}}Store.isLoading"
+          @click="openCreateDialog"
+        />
       </div>
     </header>
 
@@ -202,7 +216,13 @@ onMounted(async () => {
           <template #empty>
             <div class="empty-state">
               <p class="empty-title">Ainda não existem registos</p>
-              <Button label="Criar Novo" icon="pi pi-plus" class="p-button-primary p-button-sm mt-3" @click="openCreateDialog" />
+              <Button
+                v-if="user.getPermition('{{name}}.create')"
+                label="Criar Novo"
+                icon="pi pi-plus"
+                class="p-button-primary p-button-sm mt-3"
+                @click="openCreateDialog"
+              />
             </div>
           </template>
 
@@ -215,8 +235,18 @@ onMounted(async () => {
           <Column header="Acções" style="width: 140px; text-align: center">
             <template #body="{ data }">
               <div class="action-buttons">
-                <Button icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-warning action-btn" @click="openEditDialog(data)" />
-                <Button icon="pi pi-trash" class="p-button-text p-button-rounded p-button-danger action-btn" @click="confirmDelete(data)" />
+                <Button
+                  v-if="user.getPermition('{{name}}.update')"
+                  icon="pi pi-pencil"
+                  class="p-button-text p-button-rounded p-button-warning action-btn"
+                  @click="openEditDialog(data)"
+                />
+                <Button
+                  v-if="user.getPermition('{{name}}.delete')"
+                  icon="pi pi-trash"
+                  class="p-button-text p-button-rounded p-button-danger action-btn"
+                  @click="confirmDelete(data)"
+                />
               </div>
             </template>
           </Column>
