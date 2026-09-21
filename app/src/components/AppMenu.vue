@@ -59,6 +59,12 @@ function getList(){
       permition: user.getPermition('academic_year.view'),
     },
     {
+      label: 'Salas',
+      link: '/salas',
+      icon: 'pi pi-book',
+      permition: user.getPermition('class_room.view'),
+    },
+    {
       label: 'Cursos',
       link: '/cursos',
       icon: 'pi pi-book',

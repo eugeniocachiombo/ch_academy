@@ -76,6 +76,12 @@ const routes = [
         component: () => import("@/views/RolePermition/Index.vue"),
         meta: { permition: 'role_permition.view' },
       },
+      {
+        path: "salas",
+        name: "class_room",
+        component: () => import("@/views/ClassRoom/Index.vue"),
+        meta: { permition: 'class_room.view' },
+      },
     ],
   },
   {
