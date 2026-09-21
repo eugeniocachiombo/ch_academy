@@ -8,7 +8,7 @@ import InputText from 'primevue/inputtext';
 import Tag from 'primevue/tag';
 import Badge from 'primevue/badge';
 import ProgressSpinner from 'primevue/progressspinner';
-import { useClassRoomStore } from '@/stores/class_room.store';
+import { useClassRoomStore } from '@/stores/classRoom.store';
 import ClassRoomDialog from '@/views/ClassRoom/Dialog.vue';
 import { useToast } from 'primevue/usetoast';
 import { findModel } from '@/services/general.service.js';
